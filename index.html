@@ -1,1 +1,371 @@
-hello simone
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELLO_WORLD :: SYS_ONLINE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --phosphor: #00ff41;
+    --phosphor-dim: #00cc33;
+    --phosphor-glow: #00ff4133;
+    --bg: #0a0e0a;
+    --bg-deep: #050705;
+    --amber: #ffb000;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg-deep);
+    color: var(--phosphor);
+    font-family: 'VT323', 'JetBrains Mono', 'Courier New', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* CRT screen container */
+  .crt {
+    position: relative;
+    min-height: 100vh;
+    padding: 40px 24px;
+    background:
+      radial-gradient(ellipse at center, rgba(0, 255, 65, 0.06) 0%, transparent 70%),
+      var(--bg);
+    animation: flicker 0.15s infinite, crt-on 1.6s ease-out;
+  }
+
+  /* Scanlines */
+  .crt::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.25) 3px,
+      rgba(0, 0, 0, 0.25) 3px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Vignette + curvature illusion */
+  .crt::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.985; }
+  }
+
+  @keyframes crt-on {
+    0% {
+      transform: scale(1, 0.005);
+      filter: brightness(4);
+      opacity: 0;
+    }
+    35% {
+      transform: scale(1, 0.005);
+      opacity: 1;
+    }
+    70% {
+      transform: scale(1, 1);
+      filter: brightness(2);
+    }
+    100% {
+      transform: scale(1, 1);
+      filter: brightness(1);
+      opacity: 1;
+    }
+  }
+
+  .terminal {
+    max-width: 980px;
+    margin: 0 auto;
+    text-shadow:
+      0 0 2px var(--phosphor),
+      0 0 8px var(--phosphor-glow),
+      0 0 18px var(--phosphor-glow);
+  }
+
+  .header {
+    border: 1px solid var(--phosphor-dim);
+    padding: 8px 14px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .header-left { color: var(--amber); text-shadow: 0 0 6px var(--amber); }
+  .header-right { font-size: 16px; opacity: 0.85; }
+
+  .boot {
+    font-size: 20px;
+    line-height: 1.45;
+    margin-bottom: 32px;
+  }
+
+  .boot-line {
+    opacity: 0;
+    animation: type-in 0.15s steps(1) forwards;
+  }
+
+  .boot-line .ok { color: var(--phosphor); }
+  .boot-line .warn { color: var(--amber); text-shadow: 0 0 6px var(--amber); }
+  .boot-line .label { opacity: 0.7; }
+
+  /* Stagger delays for boot lines */
+  .boot-line:nth-child(1) { animation-delay: 1.6s; }
+  .boot-line:nth-child(2) { animation-delay: 1.85s; }
+  .boot-line:nth-child(3) { animation-delay: 2.10s; }
+  .boot-line:nth-child(4) { animation-delay: 2.40s; }
+  .boot-line:nth-child(5) { animation-delay: 2.70s; }
+  .boot-line:nth-child(6) { animation-delay: 3.00s; }
+  .boot-line:nth-child(7) { animation-delay: 3.30s; }
+  .boot-line:nth-child(8) { animation-delay: 3.60s; }
+
+  @keyframes type-in {
+    to { opacity: 1; }
+  }
+
+  /* ASCII art block */
+  .ascii-art {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 700;
+    font-size: clamp(6px, 1.45vw, 14px);
+    line-height: 1.05;
+    white-space: pre;
+    color: var(--phosphor);
+    text-shadow:
+      0 0 4px var(--phosphor),
+      0 0 14px var(--phosphor-glow),
+      0 0 28px var(--phosphor-glow);
+    margin: 24px 0;
+    opacity: 0;
+    animation: art-reveal 0.4s ease-out forwards;
+    animation-delay: 4.0s;
+    overflow-x: auto;
+  }
+
+  @keyframes art-reveal {
+    0% { opacity: 0; filter: blur(8px) brightness(3); }
+    100% { opacity: 1; filter: blur(0) brightness(1); }
+  }
+
+  .tagline {
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 4px;
+    margin: 24px 0 32px;
+    opacity: 0;
+    animation: type-in 0.2s steps(1) forwards;
+    animation-delay: 4.4s;
+  }
+
+  .tagline .bracket { color: var(--amber); text-shadow: 0 0 6px var(--amber); }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin: 32px 0;
+    opacity: 0;
+    animation: type-in 0.2s steps(1) forwards;
+    animation-delay: 4.7s;
+  }
+
+  .info-card {
+    border: 1px solid var(--phosphor-dim);
+    padding: 12px 16px;
+    font-size: 18px;
+    line-height: 1.4;
+    position: relative;
+  }
+
+  .info-card::before {
+    content: "[" attr(data-label) "]";
+    position: absolute;
+    top: -11px;
+    left: 12px;
+    background: var(--bg);
+    padding: 0 8px;
+    color: var(--amber);
+    text-shadow: 0 0 6px var(--amber);
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .info-card .key { opacity: 0.6; }
+  .info-card .val { color: var(--phosphor); }
+
+  .prompt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    margin-top: 32px;
+    opacity: 0;
+    animation: type-in 0.2s steps(1) forwards;
+    animation-delay: 5.0s;
+  }
+
+  .prompt .user { color: var(--amber); text-shadow: 0 0 6px var(--amber); }
+  .prompt .arrow { opacity: 0.7; }
+
+  .cursor {
+    display: inline-block;
+    width: 12px;
+    height: 22px;
+    background: var(--phosphor);
+    box-shadow: 0 0 10px var(--phosphor);
+    animation: blink 1.06s steps(1) infinite;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .footer {
+    margin-top: 56px;
+    border-top: 1px solid var(--phosphor-dim);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    opacity: 0.7;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Subtle glitch on the title once in a while */
+  .glitch {
+    animation: glitch 8s infinite;
+  }
+
+  @keyframes glitch {
+    0%, 95%, 100% { transform: translate(0); }
+    96% { transform: translate(-2px, 1px); filter: hue-rotate(20deg); }
+    97% { transform: translate(2px, -1px); }
+    98% { transform: translate(-1px, 0); }
+  }
+
+  @media (max-width: 600px) {
+    .crt { padding: 20px 14px; }
+    .header { font-size: 14px; flex-direction: column; gap: 4px; align-items: flex-start; }
+    .boot { font-size: 17px; }
+    .tagline { font-size: 17px; letter-spacing: 2px; }
+    .footer { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+  <div class="crt">
+    <div class="terminal">
+
+      <div class="header">
+        <span class="header-left">◉ MODAR_TERM v1.0</span>
+        <span class="header-right" id="clock">--:--:-- UTC</span>
+      </div>
+
+      <div class="boot">
+        <div class="boot-line"><span class="label">[ BOOT ]</span> initializing system........... <span class="ok">[ OK ]</span></div>
+        <div class="boot-line"><span class="label">[ NET  ]</span> resolving 72.62.61.195........ <span class="ok">[ OK ]</span></div>
+        <div class="boot-line"><span class="label">[ SSH  ]</span> github_actions ──► vps........ <span class="ok">[ OK ]</span></div>
+        <div class="boot-line"><span class="label">[ SYNC ]</span> rsync /opt/hello/site......... <span class="ok">[ OK ]</span></div>
+        <div class="boot-line"><span class="label">[ DOCK ]</span> nginx:alpine container........ <span class="ok">[ UP ]</span></div>
+        <div class="boot-line"><span class="label">[ HTTP ]</span> serving on :8080.............. <span class="ok">[ OK ]</span></div>
+        <div class="boot-line"><span class="label">[ DPLY ]</span> deployed from main@github..... <span class="warn">[ LIVE ]</span></div>
+        <div class="boot-line"><span class="label">[ SYS  ]</span> all systems nominal........... <span class="ok">[ READY ]</span></div>
+      </div>
+
+<pre class="ascii-art glitch">
+██╗  ██╗███████╗██╗     ██╗      ██████╗      ██╗    ██╗ ██████╗ ██████╗ ██╗     ██████╗ 
+██║  ██║██╔════╝██║     ██║     ██╔═══██╗     ██║    ██║██╔═══██╗██╔══██╗██║     ██╔══██╗
+███████║█████╗  ██║     ██║     ██║   ██║     ██║ █╗ ██║██║   ██║██████╔╝██║     ██║  ██║
+██╔══██║██╔══╝  ██║     ██║     ██║   ██║     ██║███╗██║██║   ██║██╔══██╗██║     ██║  ██║
+██║  ██║███████╗███████╗███████╗╚██████╔╝     ╚███╔███╔╝╚██████╔╝██║  ██║███████╗██████╔╝
+╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝       ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═════╝ 
+</pre>
+
+      <div class="tagline">
+        <span class="bracket">«</span> shipped via git push <span class="bracket">»</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card" data-label="HOST">
+          <div><span class="key">ip......:</span> <span class="val">72.62.61.195</span></div>
+          <div><span class="key">port....:</span> <span class="val">8080</span></div>
+          <div><span class="key">os......:</span> <span class="val">linux/docker</span></div>
+        </div>
+        <div class="info-card" data-label="STACK">
+          <div><span class="key">server..:</span> <span class="val">nginx:alpine</span></div>
+          <div><span class="key">deploy..:</span> <span class="val">github actions</span></div>
+          <div><span class="key">transport:</span> <span class="val">ssh + rsync</span></div>
+        </div>
+        <div class="info-card" data-label="STATUS">
+          <div><span class="key">build...:</span> <span class="val">main@HEAD</span></div>
+          <div><span class="key">uptime..:</span> <span class="val" id="uptime">00:00:00</span></div>
+          <div><span class="key">state...:</span> <span class="val">▮▮▮▮▮▮▮▮ ONLINE</span></div>
+        </div>
+      </div>
+
+      <div class="prompt">
+        <span class="user">simone@modar</span><span class="arrow">:~$</span> <span>echo "hello, world"</span><span class="cursor"></span>
+      </div>
+
+      <div class="footer">
+        <span>// MODAR.SPA — production_dir.shell</span>
+        <span id="dateline">SESSION ESTABLISHED</span>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // Live clock (UTC, terminal style)
+  const pad = n => String(n).padStart(2, '0');
+  const clockEl = document.getElementById('clock');
+  function tickClock() {
+    const d = new Date();
+    clockEl.textContent =
+      `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())} UTC`;
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  // Uptime counter (since page load)
+  const start = Date.now();
+  const upEl = document.getElementById('uptime');
+  setInterval(() => {
+    const s = Math.floor((Date.now() - start) / 1000);
+    upEl.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
+  }, 1000);
+
+  // Dateline footer (locale fmt, but kept terminal-y)
+  const dl = document.getElementById('dateline');
+  const now = new Date();
+  dl.textContent = `${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())} // SESSION_OK`;
+</script>
+</body>
+</html>
