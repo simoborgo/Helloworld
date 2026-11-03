@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Calendario settimanale A2 orizzontale (594x420 mm), da scrivere a mano."""
 from reportlab.pdfgen import canvas
+import os
+from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -10,7 +12,7 @@ pdfmetrics.registerFont(TTFont("B", "/usr/share/fonts/truetype/dejavu/DejaVuSans
 
 W, H = 594 * mm, 420 * mm
 M = 15 * mm
-DAYS = ["LUNEDÌ", "MARTEDÌ", "MERCOLEDÌ", "GIOVEDÌ", "VENERDÌ"]
+DAYS = ["LUNEDÌ", "MARTEDÌ", "MERCOLEDÌ", "GIOVEDÌ", "VENERDÌ", "SABATO"]
 H0, H1 = 8, 19          # ore 8:00 -> 19:00
 INK, GREY, LIGHT = (0.1, 0.1, 0.1), (0.55, 0.55, 0.55), (0.82, 0.82, 0.82)
 
@@ -30,6 +32,20 @@ c.drawRightString(W - M - 190 * mm, top - 27 * mm, "Settimana dal")
 c.line(W - M - 185 * mm, top - 28 * mm, W - M - 105 * mm, top - 28 * mm)
 c.drawString(W - M - 100 * mm, top - 27 * mm, "al")
 c.line(W - M - 88 * mm, top - 28 * mm, W - M, top - 28 * mm)
+
+# Logo Modar (se presente: logo_modar.png / .jpg accanto allo script)
+here = os.path.dirname(os.path.abspath(__file__))
+for ext in ("png", "jpg", "jpeg"):
+    lp = os.path.join(here, f"logo_modar.{ext}")
+    if os.path.exists(lp):
+        img = ImageReader(lp)
+        iw, ih = img.getSize()
+        lh = 24 * mm
+        lw = lh * iw / ih
+        if lw > 90 * mm:
+            lw, lh = 90 * mm, 90 * mm * ih / iw
+        c.drawImage(lp, W - M - lw, top - lh, lw, lh, mask="auto")
+        break
 
 # Griglia
 gx0, gx1 = M, W - M
